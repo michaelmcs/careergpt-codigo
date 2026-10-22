@@ -1,0 +1,4 @@
+datos/
+resultados/
+__pycache__/
+*.pyc
