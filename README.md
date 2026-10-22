@@ -6,7 +6,7 @@ Un modelo tabular XGBoost estima la probabilidad de ingreso por programa y los o
 
 ## Datos
 
-Las bases de datos no se publican porque pertenecen a la UNA-Puno y al Ministerio de Educación. Pueden solicitarse al autor, previa autorización de ambas instituciones. Para ejecutar el código hay que colocar `ADMISION_V3.xlsx` y `SIAGIE_V3.xlsx` en la carpeta `datos/`.
+Las bases de datos no se publican porque pertenecen a las instituciones que las brindaron. Pueden solicitarse al autor, previa autorización de dichas instituciones. Para ejecutar el código hay que colocar `ADMISION_V3.xlsx` y `SIAGIE_V3.xlsx` en la carpeta `datos/`.
 
 ## Ejecución
 
