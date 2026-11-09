@@ -131,9 +131,9 @@ def rouge_l(c, r, beta=1.2):
     l = lcs(a, b); p, rc = l / len(a), l / len(b)
     return 0.0 if l == 0 else (1 + beta**2) * p * rc / (rc + beta**2 * p)
 def coherente(gen, instr):
-    pr = programas(instr); g = gen.upper()
-    if not pr or pr[0].upper() not in g: return 0
-    pos = [g.find(p.upper()) for p in pr]; return int(all(pos[0] <= q for q in pos if q >= 0))
+    # los tres programas del ranking deben aparecer en la ruta y en el mismo orden
+    pr = programas(instr); g = gen.upper(); pos = [g.find(p.upper()) for p in pr]
+    return int(len(pr) == 3 and all(q >= 0 for q in pos) and pos == sorted(pos))
 def evaluar(gen):
     rl = np.array([rouge_l(g, r) for g, r in zip(gen, ref)])
     P, Rc, F = bscore(gen, ref, lang='es', verbose=False); bf = F.numpy()

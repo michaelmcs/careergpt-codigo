@@ -23,6 +23,7 @@ python pipeline/08_notebook.py              # genera el cuaderno de Google Colab
 python pipeline/09_complementos.py          # caracterización, tasa por promedio y calibración
 python pipeline/10_diccionario.py           # diccionario de datos
 python pipeline/11_verificacion.py          # validación anidada, intervalos por persona y validación temporal
+python pipeline/12_metricas_llm.py          # métricas del modelo de lenguaje a partir de las rutas generadas en Colab
 ```
 
 Los resultados se guardan en `resultados/`. El ajuste con LoRA se ejecuta en Google Colab con el cuaderno `colab/CareER-GPT_LoRA_Colab.ipynb`, que pide subir el archivo `resultados/CareER_Dataset.jsonl`.
