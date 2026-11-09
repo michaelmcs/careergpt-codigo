@@ -11,7 +11,8 @@ Objetivos específicos 3 y 4. Ejecutar en Google Colab con **Entorno de ejecuci�
 Al terminar, descarga `resultados_llm.zip` y envíalo para completar el borrador.
 
 Tiempo aproximado en T4: entre 2 y 3 horas con la configuración por defecto.""")
-code("""!pip -q install -U transformers peft bitsandbytes accelerate datasets bert-score""")
+code("""!pip -q install -U "transformers<5" peft bitsandbytes accelerate datasets bert-score
+# Transformers 5 eliminó warmup_ratio; se fija la versión 4, con la que se validó el cuaderno""")
 code("""# ===== CONFIGURACIÓN =====
 MODELO = 'Qwen/Qwen2.5-1.5B-Instruct'   # LLM de código abierto con buen desempeño en español
 MAX_TRAIN = 6000     # pares de entrenamiento por condición (subir si hay tiempo)
@@ -27,7 +28,12 @@ code("""# Sube CareER_Dataset.jsonl cuando lo pida
 import json, re, random, numpy as np, torch
 from google.colab import files
 subido = files.upload()
-datos = [json.loads(l) for l in open('CareER_Dataset.jsonl', encoding='utf8')]
+nombre = next(iter(subido))   # Colab puede renombrar el archivo si se sube dos veces
+import hashlib
+ESPERADO = '{HUELLA}'   # huella del corpus vigente del repositorio
+huella = hashlib.md5(open(nombre, 'rb').read()).hexdigest()
+print('Corpus correcto' if huella == ESPERADO else 'ATENCIÓN: este no es el corpus vigente del repositorio', huella)
+datos = [json.loads(l) for l in open(nombre, encoding='utf8')]
 random.seed(SEED); np.random.seed(SEED); torch.manual_seed(SEED)
 tr = [d for d in datos if d['split'] == 'entrenamiento']; va = [d for d in datos if d['split'] == 'validacion']; te = [d for d in datos if d['split'] == 'prueba']
 random.shuffle(tr); random.shuffle(va); random.shuffle(te)
@@ -62,7 +68,7 @@ def cargar_base():
     m = AutoModelForCausalLM.from_pretrained(MODELO, quantization_config=BNB, device_map='auto', torch_dtype=torch.float16)
     m.config.use_cache = False
     return m""")
-code("""import time, gc
+code("""import time, gc, math
 def entrenar(con_probs, nombre):
     tok.padding_side = 'right'
     base = cargar_base()
@@ -74,7 +80,7 @@ def entrenar(con_probs, nombre):
     dtr = Dataset.from_list([tokenizar(e, con_probs) for e in tr]); dva = Dataset.from_list([tokenizar(e, con_probs) for e in va])
     args = TrainingArguments(output_dir=nombre, per_device_train_batch_size=4, gradient_accumulation_steps=4,
                              per_device_eval_batch_size=8, num_train_epochs=EPOCAS, learning_rate=LR,
-                             lr_scheduler_type='cosine', warmup_ratio=0.03, logging_steps=10, eval_strategy='steps',
+                             lr_scheduler_type='cosine', warmup_steps=math.ceil(0.03 * math.ceil(len(tr) / 16) * EPOCAS), logging_steps=10, eval_strategy='steps',
                              eval_steps=50, save_strategy='no', fp16=True, optim='paged_adamw_8bit',
                              gradient_checkpointing=True, report_to='none', seed=SEED)
     t0 = time.time()
@@ -175,6 +181,10 @@ json.dump(out, open('resultados_llm.json', 'w'), indent=2, ensure_ascii=False)
 with zipfile.ZipFile('resultados_llm.zip', 'w') as z:
     for f in ['resultados_llm.json', 'generaciones.csv', 'fig_perdida.png']: z.write(f)
 files.download('resultados_llm.zip')""")
+# huella del corpus que debe subirse a Colab, para detectar una versión desactualizada
+import hashlib
+HUELLA = hashlib.md5(open('resultados/CareER_Dataset.jsonl', 'rb').read()).hexdigest()
+for c in celdas: c['source'] = c['source'].replace('{HUELLA}', HUELLA)
 nb = {'nbformat': 4, 'nbformat_minor': 5, 'metadata': {'accelerator': 'GPU', 'kernelspec': {'name': 'python3', 'display_name': 'Python 3'},
       'colab': {'provenance': [], 'gpuType': 'T4'}}, 'cells': celdas}
 for c in nb['cells']:

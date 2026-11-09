@@ -36,7 +36,8 @@ R['poblacion'] = dict(postulaciones=len(df), personas=int(df.id_anonimo.nunique(
 d = df[(df.rindio_examen == 1) & df.promedio_secundaria.notna()].copy()
 R['poblacion'].update(analizables=len(d), personas_analizables=int(d.id_anonimo.nunique()),
                       tasa_ingreso=round(d.ingreso.mean()*100, 2),
-                      ingresantes=int(d.ingreso.sum()))
+                      ingresantes=int(d.ingreso.sum()),
+                      edad_corregida=int(d.edad_corregida.sum()), egreso_corregido=int(d.egreso_corregido.sum()))
 
 # ---------- Tabla: distribución por periodo y proceso
 tp = (d.groupby('periodo').agg(postulaciones=('ingreso','size'), ingresantes=('ingreso','sum'))
@@ -128,16 +129,20 @@ trivial = dict(modelo='Clasificador trivial (siempre no ingresa)', auc=0.5, aucp
 t_modelos = pd.DataFrame([trivial, met(oof_l, 'Regresión logística'), met(oof_x, 'XGBoost')])
 t_modelos.to_csv(S/'t_modelos.csv', index=False)
 
-# bootstrap del AUC y prueba de H1
+# bootstrap del AUC por persona: las postulaciones de una misma persona se remuestrean juntas
 rng = np.random.default_rng(RNG); bs = []
+pers = pd.Series(np.arange(len(y))).groupby(g).apply(np.array).values
 for _ in range(1000):
-    i = rng.integers(0, len(y), len(y))
+    i = np.concatenate(pers[rng.integers(0, len(pers), len(pers))])
     if y[i].sum() > 0: bs.append(roc_auc_score(y[i], oof_x[i]))
 ic = np.percentile(bs, [2.5, 97.5])
 tt = stats.ttest_1samp(t_folds.auc_xgb, 0.85, alternative='greater')
+# prueba t corregida de Nadeau y Bengio (2003): los pliegues comparten datos de entrenamiento
+k_ = len(t_folds); s2_ = t_folds.auc_xgb.var(ddof=1)
+t_c = (t_folds.auc_xgb.mean() - 0.85) / np.sqrt((1/k_ + 1/(k_-1)) * s2_); p_c = stats.t.sf(t_c, k_-1)
 # comparación XGBoost frente a regresión logística por pliegue
 tw = stats.ttest_rel(t_folds.auc_xgb, t_folds.auc_lr)
-R['h1'] = dict(auc=roc_auc_score(y, oof_x), ic_inf=ic[0], ic_sup=ic[1], t=tt.statistic, p=tt.pvalue,
+R['h1'] = dict(auc=roc_auc_score(y, oof_x), ic_inf=ic[0], ic_sup=ic[1], t=tt.statistic, p=tt.pvalue, t_corr=t_c, p_corr=p_c,
                auc_media=t_folds.auc_xgb.mean(), auc_de=t_folds.auc_xgb.std(),
                aucpr=average_precision_score(y, oof_x),
                t_vs_lr=tw.statistic, p_vs_lr=tw.pvalue,

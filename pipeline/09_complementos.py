@@ -27,7 +27,7 @@ VARS = [('sexo', 'Sexo'), ('area_colegio', 'Área del colegio'), ('tipo_gestion_
         ('area_programa', 'Área del programa postulado')]
 filas = []
 for c, et in VARS:
-    s = d[c].fillna('No registrado').astype(str).str.strip().replace({'': 'No registrado', 'nan': 'No registrado'})
+    s = d[c].fillna('No registrado').astype(str).str.strip().replace({'': 'No registrado', 'nan': 'No registrado', '\\N': 'No registrado', 'PRIVADO': 'PRIVADA'})
     t = pd.DataFrame({'cat': s, 'ingreso': d.ingreso}).groupby('cat').agg(n=('ingreso', 'size'), ing=('ingreso', 'sum'))
     t = t.sort_values('n', ascending=False)
     for cat, r in t.iterrows():

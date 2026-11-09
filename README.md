@@ -6,7 +6,7 @@ Un modelo tabular XGBoost estima la probabilidad de ingreso por programa y los o
 
 ## Datos
 
-Las bases de datos no se publican porque pertenecen a las instituciones que las brindaron. Pueden solicitarse al autor, previa autorización de dichas instituciones. Para ejecutar el código hay que colocar `ADMISION_V3.xlsx` y `SIAGIE_V3.xlsx` en la carpeta `datos/`.
+Las bases de datos no se publican porque pertenecen a las instituciones que las brindaron. Pueden solicitarse al autor, previa autorización de dichas instituciones. Para ejecutar el código hay que colocar `ADMISION_V5.xlsx` y `NOTAS SECUNDARIA V5d.xlsx` en la carpeta `datos/`. Las notas de secundaria provienen de los certificados de estudios que los postulantes cargan al inscribirse.
 
 ## Ejecución
 
@@ -22,6 +22,7 @@ python pipeline/07_figuras_conceptuales.py  # figuras de LoRA, arquitectura y en
 python pipeline/08_notebook.py              # genera el cuaderno de Google Colab
 python pipeline/09_complementos.py          # caracterización, tasa por promedio y calibración
 python pipeline/10_diccionario.py           # diccionario de datos
+python pipeline/11_verificacion.py          # validación anidada, intervalos por persona y validación temporal
 ```
 
 Los resultados se guardan en `resultados/`. El ajuste con LoRA se ejecuta en Google Colab con el cuaderno `colab/CareER-GPT_LoRA_Colab.ipynb`, que pide subir el archivo `resultados/CareER_Dataset.jsonl`.

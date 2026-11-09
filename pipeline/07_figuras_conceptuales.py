@@ -32,7 +32,7 @@ plt.tight_layout(); plt.savefig('resultados/fig_lora.png',dpi=220); plt.close()
 
 # ---- Figura arquitectura CareER-GPT
 fig,ax=plt.subplots(figsize=(7.6,4.6)); ax.set_xlim(0,12); ax.set_ylim(0,7.4); ax.axis('off')
-caja(ax,0.2,5.6,2.4,1.0,'Base de admisión\nUNAP',GR); caja(ax,0.2,3.9,2.4,1.0,'Historial escolar\nSIAGIE',GR)
+caja(ax,0.2,5.6,2.4,1.0,'Base de admisión\nUNAP',GR); caja(ax,0.2,3.9,2.4,1.0,'Certificados de\nestudios',GR)
 caja(ax,3.2,4.7,2.4,1.1,'Preprocesamiento\ny emparejamiento\npor identificador',AZ)
 flecha(ax,2.6,6.1,3.2,5.4); flecha(ax,2.6,4.4,3.2,5.0)
 ax.add_patch(Rectangle((6.1,3.6),5.7,3.5,fc='none',ec=AZ,ls='--',lw=1.2)); ax.text(8.95,6.85,'Componente tabular',ha='center',color=AZ,fontsize=9.5,weight='bold')

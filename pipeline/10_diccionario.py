@@ -24,18 +24,18 @@ DESC = {
     'servicios_basicos': ('Índice de acceso a agua, desagüe y electricidad', 'Derivada'),
     'equipamiento_tic': ('Índice de acceso a internet y computadora en el hogar', 'Derivada'),
     'numero_postulaciones_anteriores': ('Número de postulaciones previas a la universidad', 'Admisión'),
-    'promedio_secundaria': ('Promedio general anual de tercero a quinto de secundaria', 'Derivada del SIAGIE'),
-    'promedio_5to': ('Promedio general anual de quinto de secundaria', 'SIAGIE'),
-    'tendencia_notas': ('Promedio de quinto grado menos promedio de tercer grado', 'Derivada del SIAGIE'),
-    'dispersion_notas': ('Desviación estándar de los promedios de tercero a quinto grado', 'Derivada del SIAGIE'),
-    'areas_desaprobadas_total': ('Total de áreas desaprobadas de tercero a quinto grado', 'Derivada del SIAGIE'),
-    'perfil_cuantitativo': ('Media de Matemática y Ciencia y Tecnología', 'Derivada del SIAGIE'),
-    'perfil_verbal': ('Media de Comunicación y Ciencias Sociales', 'Derivada del SIAGIE'),
-    'brecha_cuanti_verbal': ('Perfil cuantitativo menos perfil verbal', 'Derivada del SIAGIE'),
-    'grados_registrados': ('Número de grados de tercero a quinto con registro', 'Derivada del SIAGIE'),
-    'repitio': ('Indicador de repitencia de algún grado, 1 si repitió', 'Derivada del SIAGIE'),
-    'se_retiro': ('Indicador de retiro en algún grado, 1 si se retiró', 'Derivada del SIAGIE'),
-    'grados_requiere_recuperacion': ('Número de grados con situación final de recuperación', 'Derivada del SIAGIE'),
+    'promedio_secundaria': ('Promedio general anual de tercero a quinto de secundaria', 'Derivada de certificados'),
+    'promedio_5to': ('Promedio general anual de quinto de secundaria', 'Certificados'),
+    'tendencia_notas': ('Promedio de quinto grado menos promedio de tercer grado', 'Derivada de certificados'),
+    'dispersion_notas': ('Desviación estándar de los promedios de tercero a quinto grado', 'Derivada de certificados'),
+    'areas_desaprobadas_total': ('Total de áreas desaprobadas de tercero a quinto grado', 'Derivada de certificados'),
+    'perfil_cuantitativo': ('Media de Matemática y Ciencia y Tecnología', 'Derivada de certificados'),
+    'perfil_verbal': ('Media de Comunicación y Ciencias Sociales', 'Derivada de certificados'),
+    'brecha_cuanti_verbal': ('Perfil cuantitativo menos perfil verbal', 'Derivada de certificados'),
+    'grados_registrados': ('Número de grados de tercero a quinto con registro', 'Derivada de certificados'),
+    'repitio': ('Indicador de repitencia de algún grado, 1 si repitió', 'Derivada de certificados'),
+    'se_retiro': ('Indicador de retiro en algún grado, 1 si se retiró', 'Derivada de certificados'),
+    'grados_requiere_recuperacion': ('Número de grados con situación final de recuperación', 'Derivada de certificados'),
     'tasa_previa': ('Tasa de ingreso del programa en procesos anteriores del mismo tipo', 'Derivada de Admisión'),
     'tipo_proceso': ('Modalidad del proceso de admisión', 'Admisión'),
     'area_examen': ('Área académica del examen', 'Admisión'),
@@ -60,12 +60,12 @@ DESC = {
     'estudio_cepreuna_previo': ('Indica si estudió previamente en el CEPREUNA', 'Admisión'),
     'tipo_preparacion_preuniversitaria': ('Tipo de preparación preuniversitaria', 'Admisión'),
     'estudio_universidad_previamente': ('Indica si estudió antes en una universidad', 'Admisión'),
-    'ie_turno': ('Turno de la institución educativa', 'SIAGIE'),
-    'ie_forma_atencion_modelo_servicio': ('Forma de atención o modelo de servicio de la institución educativa', 'SIAGIE'),
-    'ie_gestion_dependencia': ('Dependencia de gestión de la institución educativa', 'SIAGIE'),
+    'ie_turno': ('Turno de la institución educativa', 'Certificados'),
+    'ie_forma_atencion_modelo_servicio': ('Forma de atención o modelo de servicio de la institución educativa', 'Certificados'),
+    'ie_gestion_dependencia': ('Dependencia de gestión de la institución educativa', 'Certificados'),
 }
 for k, v in AREAS.items():
-    DESC[k + '_media'] = (f'Promedio de {v} de tercero a quinto grado', 'Derivada del SIAGIE')
+    DESC[k + '_media'] = (f'Promedio de {v} de tercero a quinto grado', 'Derivada de certificados')
 
 def fmt(x):
     return f'{x:.0f}' if float(x).is_integer() else f'{x:.2f}'

@@ -1,6 +1,6 @@
 """
 CareER-GPT | Etapa 1: preprocesamiento y construcción del dataset analítico
-Une la base de Admisión con los registros escolares del SIAGIE y deja una
+Une la base de Admisión con las notas de secundaria de los certificados de estudios y deja una
 tabla con una fila por postulación, usando únicamente información anterior
 al examen de admisión.
 """
@@ -29,12 +29,12 @@ print('ETAPA 1: PREPROCESAMIENTO')
 print('=' * 70)
 
 # ---------------------------------------------------------------- carga
-adm = pd.read_excel(ENTRADA / 'ADMISION_V3.xlsx')
-sia = pd.read_excel(ENTRADA / 'SIAGIE_V3.xlsx')
+adm = pd.read_excel(ENTRADA / 'ADMISION_V5.xlsx')
+sia = pd.read_excel(ENTRADA / 'NOTAS SECUNDARIA V5d.xlsx')
 print(f'\nAdmisión : {adm.shape[0]:,} filas x {adm.shape[1]} columnas')
-print(f'SIAGIE   : {sia.shape[0]:,} filas x {sia.shape[1]} columnas')
+print(f'Notas    : {sia.shape[0]:,} filas x {sia.shape[1]} columnas')
 
-# ------------------------------------------- SIAGIE: de formato largo a ancho
+# ------------------------------------------- notas: de formato largo a ancho
 # Si un estudiante repitió, hay más de un registro por grado.
 # Se conserva el último año cursado de cada grado, que es el resultado final.
 sia = sia.sort_values(['id_anonimo', 'grado', 'anio_lectivo'])
@@ -106,6 +106,18 @@ df['areas_desaprobadas_total'] = df[[f'numero_areas_desaprobadas_g{g}'
 df['perfil_cuantitativo'] = df[['matematica_media', 'ciencia_tecnologia_media']].mean(axis=1)
 df['perfil_verbal'] = df[['comunicacion_media', 'ciencias_sociales_media']].mean(axis=1)
 df['brecha_cuanti_verbal'] = df['perfil_cuantitativo'] - df['perfil_verbal']
+
+# Limpieza de fechas: edades imposibles por errores de digitación de la fecha de nacimiento
+df['edad_al_examen'] = pd.to_numeric(df['edad_al_examen'], errors='coerce')
+edad_mala = ~df['edad_al_examen'].between(14, 80)
+df.loc[edad_mala, 'edad_al_examen'] = np.nan
+# un egreso posterior al examen es un error de registro: se usa el año de quinto grado del certificado
+egr = pd.to_numeric(df['anio_egreso_secundaria'], errors='coerce')
+egreso_malo = egr > df['anio']
+df['anio_egreso_secundaria'] = egr.where(~egreso_malo, df['anio_escolar_max'].where(df['anio_escolar_max'] <= df['anio']))
+df['edad_corregida'] = edad_mala.astype(int); df['egreso_corregido'] = egreso_malo.astype(int)
+print(f'Edades fuera de 14 a 80 años tratadas como faltantes: {edad_mala.sum():,}')
+print(f'Años de egreso posteriores al examen corregidos con el certificado: {egreso_malo.sum():,}')
 
 # Trayectoria temporal
 df['anios_desde_egreso'] = df['anio'] - df['anio_egreso_secundaria']
