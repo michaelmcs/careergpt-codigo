@@ -1,6 +1,6 @@
 """
 CareER-GPT | Etapa 1: preprocesamiento y construcción del dataset analítico
-Une la base de Admisión con las notas de secundaria de los certificados de estudios y deja una
+Une la base de Admisión con las notas de secundaria proporcionadas por la Dirección de Admisión y deja una
 tabla con una fila por postulación, usando únicamente información anterior
 al examen de admisión.
 """
@@ -111,13 +111,13 @@ df['brecha_cuanti_verbal'] = df['perfil_cuantitativo'] - df['perfil_verbal']
 df['edad_al_examen'] = pd.to_numeric(df['edad_al_examen'], errors='coerce')
 edad_mala = ~df['edad_al_examen'].between(14, 80)
 df.loc[edad_mala, 'edad_al_examen'] = np.nan
-# un egreso posterior al examen es un error de registro: se usa el año de quinto grado del certificado
+# un egreso posterior al examen es un error de registro: se usa el año de quinto grado de la base de notas
 egr = pd.to_numeric(df['anio_egreso_secundaria'], errors='coerce')
 egreso_malo = egr > df['anio']
 df['anio_egreso_secundaria'] = egr.where(~egreso_malo, df['anio_escolar_max'].where(df['anio_escolar_max'] <= df['anio']))
 df['edad_corregida'] = edad_mala.astype(int); df['egreso_corregido'] = egreso_malo.astype(int)
 print(f'Edades fuera de 14 a 80 años tratadas como faltantes: {edad_mala.sum():,}')
-print(f'Años de egreso posteriores al examen corregidos con el certificado: {egreso_malo.sum():,}')
+print(f'Años de egreso posteriores al examen corregidos con la base de notas: {egreso_malo.sum():,}')
 
 # Trayectoria temporal
 df['anios_desde_egreso'] = df['anio'] - df['anio_egreso_secundaria']
